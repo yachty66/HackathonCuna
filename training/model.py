@@ -15,11 +15,6 @@ def loadData():
     x_train, x_test, y_train, y_test = train_test_split(
         dfX, dfY, test_size=0.2, random_state=0
     )
-    # scale data with standard scaler
-    """x_train = (x_train - x_train.mean()) / x_train.std()
-    y_train = (y_train - y_train.mean()) / y_train.std()
-    x_test = (x_test - x_test.mean()) / x_test.std()
-    y_test = (y_test - y_test.mean()) / y_test.std()"""
     scalerX = StandardScaler().fit(x_train)
     scalerY = StandardScaler().fit(y_train)
     x_train = scalerX.transform(x_train)
@@ -45,23 +40,18 @@ def multiLinearRegression():
     x_train, x_test, y_train, y_test = train_test_split(
         dfX, dfY, test_size=0.2, random_state=0
     )
-    # scale data with standard scaler
-    """x_train = (x_train - x_train.mean()) / x_train.std()
-    y_train = (y_train - y_train.mean()) / y_train.std()
-    x_test = (x_test - x_test.mean()) / x_test.std()
-    y_test = (y_test - y_test.mean()) / y_test.std()"""
-    scalerX = StandardScaler().fit(x_train)
+    '''scalerX = StandardScaler().fit(x_train)
     scalerY = StandardScaler().fit(y_train)
     x_train = scalerX.transform(x_train)
     y_train = scalerY.transform(y_train)
-    x_test = scalerX.transform(x_test)
+    x_test = scalerX.transform(x_test)'''
     # y_test = scalerY.transform(y_test)
 
     # convert data to torch tensors
-    x_train = torch.from_numpy(x_train).float()
+    '''x_train = torch.from_numpy(x_train).float()
     y_train = torch.from_numpy(y_train).float()
     x_test = torch.from_numpy(x_test).float()
-    # y_test = torch.from_numpy(y_test).float()
+    y_test = torch.from_numpy(y_test).float()'''
 
     """x_train = torch.detach().numpy()(x_train).float()
     y_train = torch.detach().numpy()(y_train).float()
@@ -73,6 +63,13 @@ def multiLinearRegression():
         torch.from_numpy(x_test.values),
         torch.from_numpy(y_test.values),
     )"""
+    
+    x_train, y_train, x_test, y_test = (
+        torch.from_numpy(x_train.values),
+        torch.from_numpy(y_train.values),
+        torch.from_numpy(x_test.values),
+        torch.from_numpy(y_test.values),
+    )
 
     # scale data with standard scaler
 
@@ -84,8 +81,8 @@ def multiLinearRegression():
 
     # x_train, y_train, x_test, y_test = loadData()
 
-    test_model = model(x_test.float())
-    print(test_model)
+    #test_model = model(x_test.float())
+    #print(test_model)
 
     # train model with x data and save model
     for epoch in range(100):
@@ -97,16 +94,16 @@ def multiLinearRegression():
         loss.backward()
         optimizer.step()
 
-    test_model = model(x_test.float()).detach().numpy()
+    #test_model = model(x_test.float()).detach().numpy()
     # print(y_test)
-    yInverse = scalerY.inverse_transform(test_model)
+    #yInverse = scalerY.inverse_transform(test_model)
 
     # print first 2 rows from yInverse
-    print(yInverse[:2])
+    #print(yInverse[:2])
 
     # print(yInverse)
     # print first 2 rows from y_test
-    print(y_test[:2])
+    #print(y_test[:2])
 
     # print(y_test)
 
