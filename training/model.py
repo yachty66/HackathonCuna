@@ -6,8 +6,6 @@ import pandas as pd
 from yaml import load
 
 
-
-
 def loadData():
 
     dfX = pd.read_csv("data/preprocessed_dataX.csv")
@@ -18,6 +16,9 @@ def loadData():
     x_train, x_test, y_train, y_test = train_test_split(
         dfX, dfY, test_size=0.2, random_state=0
     )
+    # scale data with standard scaler
+    x_train = (x_train - x_train.mean()) / x_train.std()
+    y_train = (y_train - y_train.mean()) / y_train.std()
 
     x_train, y_train, x_test, y_test = (
         torch.from_numpy(x_train.values),
@@ -30,9 +31,11 @@ def loadData():
 
 
 def multiLinearRegression():
-    #add layer for 21 x variables and 3 y variables
+    # scale data with standard scaler
+
+    # add layer for 21 x variables and 3 y variables
     model = nn.Sequential(nn.Linear(21, 3))
-    
+
     criterion = nn.MSELoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
 
@@ -45,12 +48,12 @@ def multiLinearRegression():
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
-    
-    #use test data to predict values
+
+    # use test data to predict values
     y_pred = model(x_test.float())
-    print(y_pred)
-    
-    print(y_test)
+    # print(y_pred)
+
+    # print(y_test)
 
 
 # call model
