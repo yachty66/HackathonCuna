@@ -3,8 +3,6 @@ from torch import nn
 import numpy as np
 from sklearn.model_selection import train_test_split
 import pandas as pd
-from yaml import load
-
 
 def loadData():
 
@@ -19,6 +17,8 @@ def loadData():
     # scale data with standard scaler
     x_train = (x_train - x_train.mean()) / x_train.std()
     y_train = (y_train - y_train.mean()) / y_train.std()
+    x_test = (x_test - x_test.mean()) / x_test.std()
+    y_test = (y_test - y_test.mean()) / y_test.std()
 
     x_train, y_train, x_test, y_test = (
         torch.from_numpy(x_train.values),
@@ -40,23 +40,46 @@ def multiLinearRegression():
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
 
     x_train, y_train, x_test, y_test = loadData()
-
+    
+    test_model = model(x_test.float())
+    print(test_model)
+    
+    #train model with x data and save model 
     for epoch in range(100):
+        y_pred = model(x_train.float())
+        loss = criterion(y_pred, y_train.float())
+        print("epoch: ", epoch, "loss: ", loss.item())
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+    
+    test_model = model(x_test.float())
+    print(test_model)
+
+    '''for epoch in range(100):
         y_pred = model(x_train.float())
         loss = torch.sqrt(criterion(y_pred, y_train.float()))
         print(f"Epoch: {epoch+1}/100 | Loss: {loss.item():.4f}")
         loss.backward()
         optimizer.step()
-        optimizer.zero_grad()
+        optimizer.zero_grad()'''
 
+
+    #test the trained model with test data
+    #test_model = model(x_test.float())
+    return model 
+    
+    
     # use test data to predict values
-    y_pred = model(x_test.float())
-    # print(y_pred)
-
-    # print(y_test)
+    #y_pred = model(x_test.float())
+    ##rescale data
+    #scale data back 
+    #y_pred = y_pred * y_test.std() + y_test.mean()
+    #print(y_pred)
 
 
 # call model
 if __name__ == "__main__":
-    multiLinearRegression()
+    print(multiLinearRegression())
+    
     # loadData()
