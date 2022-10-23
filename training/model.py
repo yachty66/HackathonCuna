@@ -16,6 +16,7 @@ def loadData():
     x_train, x_test, y_train, y_test = train_test_split(
         dfX, dfY, test_size=0.2, random_state=0
     )
+    
     scalerX = StandardScaler().fit(x_train)
     scalerY = StandardScaler().fit(y_train)
     x_train = scalerX.transform(x_train)
@@ -33,15 +34,33 @@ def loadData():
 
 
 def multiLinearRegression():
-    dfX = pd.read_csv("data/preprocessed_dataX.csv")
-    dfY = pd.read_csv("data/preprocessed_dataY.csv")
+    dfX = pd.read_csv("data/preprocessed_dataX_merged_eval.csv")
+    dfY = pd.read_csv("data/preprocessed_dataY_merged_eval.csv")
+    
+    #drop randomly 5 columns from dataset and print name of this columns 
+    
 
     dfX = dfX.drop(dfX.columns[0], axis=1)
+    
+    #get number of columns
+    #select randomly 5 numbers from 0 to number of columns (without duplicates)
+
+    #drop columns with this numbers and print name of this column
+
+    
+    
+    #iter over 5 numbers
+    for i in range(5):
+        #drop a random column from dfX
+        #create a random number in range of number of columns
+        random = np.random.randint(0, dfX.shape[1])
+        dfX = dfX.drop(dfX.columns[random], axis=1)
+    
+
 
     x_train, x_test, y_train, y_test = train_test_split(
         dfX, dfY, test_size=0.2, random_state=0
     )
-
     scalerX = StandardScaler().fit(x_train)
     scalerY = StandardScaler().fit(y_train)
     x_train = scalerX.transform(x_train)
@@ -52,16 +71,21 @@ def multiLinearRegression():
     y_train = torch.from_numpy(y_train).float()
     x_test = torch.from_numpy(x_test).float()
 
-    #create multiple linear regression model with 
-    model = nn.Linear(21, 3)
+    model = nn.Sequential(nn.Linear(16, 3))
+    
 
-    #model = nn.Sequential(nn.Linear(21, 3))
-   
     criterion = nn.MSELoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
 
+    # x_train, y_train, x_test, y_test = loadData()
+
+    test_model = model(x_test.float())
+    print(test_model)
+
+    # train model with x data and save model
     for epoch in range(100):
         y_pred = model(x_train.float())
+        # see source for PyTorch RSME https://stackoverflow.com/a/61991258
         loss = torch.sqrt(criterion(y_pred, y_train.float()))
         print("epoch: ", epoch, "loss: ", loss.item())
         optimizer.zero_grad()
@@ -71,14 +95,14 @@ def multiLinearRegression():
     test_model = model(x_test.float()).detach().numpy()
 
     yInverse = scalerY.inverse_transform(test_model)
-
-    # print(yInverse[:2])
-    # print(y_test[:2])
-
+    
     rsme = np.sqrt(np.mean(np.power((y_test - yInverse), 2)))
     rsme = np.sqrt(mse(yInverse, y_test))
     print(rsme)
 
 
+# call model
 if __name__ == "__main__":
-    print(multiLinearRegression())
+    multiLinearRegression()
+
+    # loadData()
